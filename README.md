@@ -16,6 +16,7 @@ Väännän nyt uuden version, jossa
 
 
 Tehtäviä asioita:
+
 	[ ] Tiedostotyypin määrittely (vrt. Biisi-luokka musasynkassa)
 		[ ] Tiedostonimi
 		[ ] Lisäyspäivä
