@@ -1,6 +1,7 @@
 import os
 import json
 import vakiot_kansiovakiot as kvak
+import funktiot_kansiofunktiot as kfun
 
 class Tiedostopuu():
 	'''

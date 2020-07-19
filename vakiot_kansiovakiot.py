@@ -26,44 +26,76 @@ else:
 
 # Musiikkien sijainnit
 KANSIOT = {
-			  None:		        {[]},
-			  "Murakumo-linux": {"Musiikki:":   ["/mnt/Suzuya/Suzuyajako/Musiikki/"],
-			                     "INTERNET":    ["/mnt/Norot/Data/INTERNET/"],
-			                     "Screenshots": ["/mnt/Suzuya/Suzuyajako/Screenshots/Jaotellut/"]
-			                     },
-			  "Murakumo-win":   {"Musiikki":    ["S:\\Suzuyajako\\Musiikki\\"],
-			                     "INTERNET":    ["C:\\data\\INTERNET\\"],
-			                     "Screenshots": ["S:\\Suzuyajako\\Screenshots\\Jaotellut\\"]
-			                     },
-			  "Pettan":         {"Musiikki":    ["/mnt/data/Jouni/Musiikki/",
-			                                     "/mnt/data/Nipa/Musiikki/",
-			                                     "/mnt/data/Tursa/Musiikki/",],
-			                     "INTERNET":    ["/mnt/data/Jouni/INTERNET/"],
-			                     "Screenshots": ["/mnt/data/Jouni/Screenshots/Jaotellut/"]
-			                     },
-			  "Olkkari":        {"Musiikki":     ["/mnt/Data/Jouni/Musiikki/"],
-                                 "INTERNET":     ["/mnt/home/olkkari/Pictures/INTERNET/"],
-			                     "Screenshots":  ["/mnt/Data/Jouni/Screenshots/Jaotellut/"]
-			                     },
-			  }
+		  None:		        {},
+		  "Murakumo-linux": {"Musiikki":   ["/mnt/Suzuya/Suzuyajako/Musiikki/"],
+		                     "INTERNET":    ["/mnt/Norot/Data/INTERNET/"],
+		                     "Screenshots": ["/mnt/Suzuya/Suzuyajako/Screenshots/Jaotellut/"]
+		                     },
+		  "Murakumo-win":   {"Musiikki":    ["S:\\Suzuyajako\\Musiikki\\"],
+		                     "INTERNET":    ["C:\\data\\INTERNET\\"],
+		                     "Screenshots": ["S:\\Suzuyajako\\Screenshots\\Jaotellut\\"],
+		                     },
+		  "Pettan":         {"Musiikki":    ["/mnt/data/Jouni/Musiikki/",
+		                                     "/mnt/data/Nipa/Musiikki/",
+		                                     "/mnt/data/Tursa/Musiikki/"],
+		                     "INTERNET":    ["/mnt/data/Jouni/INTERNET/"],
+		                     "Screenshots": ["/mnt/data/Jouni/Screenshots/Jaotellut/"]
+		                     },
+		  "Olkkari":        {"Musiikki":     ["/mnt/Data/Jouni/Musiikki/"],
+                             "INTERNET":     ["/mnt/home/olkkari/Pictures/INTERNET/"],
+		                     "Screenshots":  ["/mnt/Data/Jouni/Screenshots/Jaotellut/"]
+		                     },
+		}
 # Sijainteja vastaavien tietokantatiedostojen sijainnit
 TIETOKANNAT = {
-			  None:		  [],
-			  "Murakumo": {"Musiikki:":   ["/home/pilperi/Tietokannat/Musiikit/musiikit.tietokanta"],
-			               "INTERNET":    ["/mnt/Norot/Data/INTERNET/"],
-			               "Screenshots": ["/mnt/Suzuya/Suzuyajako/Screenshots/Jaotellut/"]
-			              },
-			  "Pettan":   ["/home/taira/tietokannat/Musakirjasto/jounimusat.tietokanta",
-			  			   "/home/taira/tietokannat/Musakirjasto/nipamusat.tietokanta",
-			  			   "/home/taira/tietokannat/Musakirjasto/tursamusat.tietokanta"
-			  			  ],
-			  "Olkkari":  ["/home/olkkari/Tietokannat/Musiikit/musiikit.tietokanta"]
+			  None:		        {},
+			  "Murakumo-linux": {"Musiikki:":   ["/home/pilperi/Tietokannat/Musiikit/musiikit.tietokanta"],
+			                     "INTERNET":    ["/home/pilperi/Tietokannat/Synkka/INTERNET.tietokanta"],
+			                     "Screenshots": ["/home/pilperi/Tietokannat/Synkka/Screenshots.tietokanta"]
+			                    },
+			  "Murakumo-win":   {"Musiikki:":   [""],
+			                     "INTERNET":    [""],
+			                     "Screenshots": [""]
+			                    },
+			  "Pettan":         {"Musiikki":    ["/home/taira/tietokannat/Musakirjasto/jounimusat.tietokanta",
+			  			                         "/home/taira/tietokannat/Musakirjasto/nipamusat.tietokanta",
+			  			                         "/home/taira/tietokannat/Musakirjasto/tursamusat.tietokanta"
+			  			                        ],
+			  			         "INTERNET":    ["/home/taira/tietokannat/Synkka/INTERNET.tietokanta"],
+			  			         "Screenshots": ["/home/taira/tietokannat/Synkka/Screenshots.tietokanta"]
+			  			        },
+			  "Olkkari":        {"Musiikki":    ["/home/olkkari/Tietokannat/Musiikit/musiikit.tietokanta"],
+			                     "INTERNET":    [""],
+			                     "Screenshots": [""]
+			                    }
 			  }
-LOKAALIT_MUSIIKIT    = MUSAKANSIOT.get(LOKAALI_KONE)
-LOKAALIT_TIETOKANNAT = TIETOKANNAT.get(LOKAALI_KONE)
-# Jos pituuksissa hämminkiä, täytä nulleilla (ei kyl saisi olla)
-if all(type(a) is list for a in [LOKAALIT_MUSIIKIT, LOKAALIT_MUSIIKIT]) and len(LOKAALIT_MUSIIKIT) != len(LOKAALIT_MUSIIKIT):
-	while len(LOKAALIT_MUSIIKIT) < len(LOKAALIT_TIETOKANNAT):
-		LOKAALIT_MUSIIKIT.append(None)
-	while len(LOKAALIT_MUSIIKIT) > len(LOKAALIT_TIETOKANNAT):
-		LOKAALIT_TIETOKANNAT.append(None)
+LOKAALIT_MUSIIKIT    = None
+LOKAALIT_INTERNET    = None
+LOKAALIT_SCREENSHOTS = None
+LOKAALIT_TIETOKANNAT = None
+if KANSIOT.get(LOKAALI_KONE) is not None:
+	LOKAALIT_MUSIIKIT    = KANSIOT[LOKAALI_KONE].get("Musiikki")
+	LOKAALIT_INTERNET    = KANSIOT[LOKAALI_KONE].get("INTERNET")
+	LOKAALIT_SCREENSHOTS = KANSIOT[LOKAALI_KONE].get("Screenshots")
+	LOKAALIT_TIETOKANNAT = TIETOKANNAT.get(LOKAALI_KONE)
+
+# Mitkä on voimasuhteet, pusketaanko Pettanille (True) vai kiskotaanko Pettanilta (False)
+# ja minkä indeksiseen Pettanin tietokantaan verrataan (esim. jounimusat.tietokanta vai tursamusat.tietokanta)
+# Pettan ei kisko eikä puske mitään minnekään.
+MASTERIT =  {
+            "Murakumo-linux": {"Musiikki":    (True,  0),
+                               "INTERNET":    (True,  0),
+                               "Screenshots": (False, 0)
+                              },
+            "Murakumo-win":   {"Musiikki":    (True,  0),
+                               "INTERNET":    (True,  0),
+                               "Screenshots": (False, 0)
+                              },
+            "Olkkari":        {"Musiikki":    (False, 0),
+                               "INTERNET":    (False, 0),
+                               "Screenshots": (True,  0)
+                              }
+            }
+VOIMASUHTEET = None
+if LOKAALI_KONE:
+	VOIMASUHTEET = MASTERIT.get(LOKAALI_KONE)
