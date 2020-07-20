@@ -21,7 +21,9 @@ Tehtäviä asioita:
 		[x] Tiedostonimi
 		[x] Lisäyspäivä
 		[x] Hashi (?)
-	[x] Synkkafunktiot pyörimään Tiedostopuilla
+	[/] Synkkafunktiot pyörimään Tiedostopuilla
+		[x] Puiden vertailu toisiinsa
+		[ ] Lokaalin puun päivittäminen
 	[/] Kansiomääritelmät, mitä on missäkin ja mihin tietokantatiedostoon pitäisi tallentaa
 		[/] Oman huoneen kone
 			[x] Lokaalit tiedostokansiot

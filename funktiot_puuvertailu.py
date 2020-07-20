@@ -120,7 +120,7 @@ def kasaa_tietokanta(kansiotyyppi):
 	if kansiotyyppi == "Musiikki":
 		tiedostotyyppi = Biisi
 	for k,tietokansio in enumerate(kvak.KANSIOT[kvak.LOKAALI_KONE][kansiotyyppi]):
-		puu = Tiedostopuu(kansio=tietokansio, tiedostotyyppi=tiedostotyyppi)
+		puu = Tiedostopuu(tietokansio, None, 0, tiedostotyyppi, False)
 		puu.kansoita()
 		kohdetiedosto = kvak.LOKAALIT_TIETOKANNAT[kansiotyyppi][k]
 		f = open(kohdetiedosto, "w+")
@@ -190,4 +190,5 @@ def synkkaa():
 			print("Ei saatu kopioitua Pettanilta tiedostotietokantoja")
 	return(1)
 
-# onnistuminen = synkkaa()
+if __name__ == "__main__":
+	tarkista_onko_tietokannat()

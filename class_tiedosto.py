@@ -13,6 +13,8 @@ class Tiedosto:
 		self.lisayspaiva  = None
 		self.hash         = None
 
+		# print(kohteesta)
+
 		# Lukukohteena tiedostopolku (str)
 		if type(kohteesta) is str:
 			self.lue_tiedostosta(kohteesta)
@@ -29,7 +31,7 @@ class Tiedosto:
 		Hitto kun kaikki mutagenin paluuarvot on yhden alkion listoja...
 		'''
 		self.tiedostonimi = os.path.basename(tiedostopolku)
-		self.lisayspaiva  = self.paivays()
+		self.lisayspaiva  = self.paivays()[0]
 		# self.hash         = kfun.hanki_hash(tiedostopolku)
 
 	def paivays(self, lue=None):
