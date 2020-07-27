@@ -5,6 +5,9 @@ relevanttien kansioiden sijainnit eri tietokoneilla.
 '''
 import os
 
+# Tulosta komentoriville, älä poistele juttuja
+TESTIMOODI = True
+
 MUSATIEDOSTOT = ["mp3", "flac", "wma"]
 KIELLETYT = []
 
@@ -49,11 +52,11 @@ KANSIOT = {
 # Sijainteja vastaavien tietokantatiedostojen sijainnit
 TIETOKANNAT = {
 			  None:		        {},
-			  "Murakumo-linux": {"Musiikki:":   ["/home/pilperi/Tietokannat/Musiikit/musiikit.tietokanta"],
+			  "Murakumo-linux": {"Musiikki":    ["/home/pilperi/Tietokannat/Musiikit/musiikit.tietokanta"],
 			                     "INTERNET":    ["/home/pilperi/Tietokannat/Synkka/INTERNET.tietokanta"],
 			                     "Screenshots": ["/home/pilperi/Tietokannat/Synkka/Screenshots.tietokanta"]
 			                    },
-			  "Murakumo-win":   {"Musiikki:":   [""],
+			  "Murakumo-win":   {"Musiikki":    [""],
 			                     "INTERNET":    [""],
 			                     "Screenshots": [""]
 			                    },

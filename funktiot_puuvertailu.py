@@ -5,7 +5,7 @@ from class_tiedosto import Tiedosto
 from class_biisit import Biisi
 from class_tiedostopuu import Tiedostopuu
 
-def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvelin=None):
+def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvelin=None, tulosta=False):
 	'''
 	Vertaa lapsipuuta isäntäpuuhun.
 	Jos lapsipuussa on kansioita tai tiedostoja jotka
@@ -31,12 +31,16 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 			if type(lapsipalvelin) is str:
 				kohdetiedosto = "{}:{}".format(lapsipalvelin, tiedosto.tiedostonimi)
 			# Siirrä
-			siirrettiin = False
-			for yritys in range(5):
-				siirrettiin = kfun.lataa(True, lahdetiedosto, kohdetiedosto)
-				if siirrettiin:
-					lapsipuu.tiedostot.append(tiedosto)
-					break
+			if kvak.TESTIMOODI:
+				print(f"Lataa tiedosto\n   {lahdetiedosto}\n   kohteeseen\n   {kohdetiedosto}")
+				break
+			else:
+				siirrettiin = False
+				for yritys in range(5):
+					siirrettiin = kfun.lataa(True, lahdetiedosto, kohdetiedosto)
+					if siirrettiin:
+						lapsipuu.tiedostot.append(tiedosto)
+						break
 	# Tiedostoa ei pitäisi olla: poista
 	poistetut_tiedostot = []
 	for indeksi,tiedosto in enumerate(lapsipuu.tiedostot):
@@ -44,15 +48,21 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 			lahdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
 			# Tiedosto etäpalvelimella
 			if type(lapsipalvelin) is str:
-				poistettu = False
-				for i in range(5):
-					poistettu = kfun.etapoisto(True, lapsipalvelin, lahdetiedosto)
-					if poistettu:
-						poistetut_tiedostot.append(indeksi)
-						break
+				if kvak.TESTIMOODI:
+					print(f"Poista tiedosto\n   {lahdetiedosto}\n   palvelimelta\n   {lapsipalvelin}")
+				else:
+					poistettu = False
+					for i in range(5):
+						poistettu = kfun.etapoisto(True, lapsipalvelin, lahdetiedosto)
+						if poistettu:
+							poistetut_tiedostot.append(indeksi)
+							break
 			# Lokaali tiedosto
 			else:
-				os.remove(lahdetiedosto)
+				if kvak.TESTIMOODI:
+					print(f"Poista tiedosto\n   {lahdetiedosto}\n   lokaalilta kovalevyltä")
+				else:
+					os.remove(lahdetiedosto)
 	i = len(poistetut_tiedostot)-1
 	while i >= 0:
 		p = lapsipuu.tiedostot.pop(i)
@@ -76,17 +86,20 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 			if type(lapsipalvelin) is str:
 				kohdekansio = "{}:{}".format(lapsipalvelin, alikansio.kansio)
 			# Siirrä
-			siirrettiin = False
-			for yritys in range(5):
-				siirrettiin = kfun.lataa(False, lahdekansio, kohdekansio)
-				if siirrettiin:
-					# Luo Tiedostopuu alikansiosta.
-					# Voitaisiin vaan ottaa suoraan alikansiosta versio jonka isäntä on lapsipuun
-					# kansio, mutta tällöin päiväykset menisivät ihan miten sattuu.
-					alikansiopuu = Tiedostopuu(kansio=alikansio.kansio, edellinenkansio=lapsipuu, syvennystaso=alikansio.syvennystaso+1, tiedostotyyppi=alikansio.tiedostotyyppi)
-					alikansiopuu.kansoita()
-					lapsipuu.alikansiot.append(alikansiopuu)
-					break
+			if kvak.TESTIMOODI:
+				print(f"Kopioi kansio\n   {lahdekansio}\n   kohteeseen\n   {kohdekansio}")
+			else:
+				siirrettiin = False
+				for yritys in range(5):
+					siirrettiin = kfun.lataa(False, lahdekansio, kohdekansio)
+					if siirrettiin:
+						# Luo Tiedostopuu alikansiosta.
+						# Voitaisiin vaan ottaa suoraan alikansiosta versio jonka isäntä on lapsipuun
+						# kansio, mutta tällöin päiväykset menisivät ihan miten sattuu.
+						alikansiopuu = Tiedostopuu(kansio=alikansio.kansio, edellinenkansio=lapsipuu, syvennystaso=alikansio.syvennystaso+1, tiedostotyyppi=alikansio.tiedostotyyppi)
+						alikansiopuu.kansoita()
+						lapsipuu.alikansiot.append(alikansiopuu)
+						break
 
 	# Kansiota ei pitäisi olla: poista
 	poistetut_kansiot = []
@@ -95,19 +108,26 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 			lahdekansio = os.path.join(lapsipuu.hae_nykyinen_polku(), alikansio.kansio)
 			# Tiedosto etäpalvelimella
 			if type(lapsipalvelin) is str:
-				poistettu = False
-				for i in range(5):
-					poistettu = kfun.etapoisto(False, lapsipalvelin, lahdekansio)
-					if poistettu:
-						poistetut_kansiot.append(indeksi)
-						break
+				if kvak.TESTIMOODI:
+					print(f"Poista kansio\n   {lahdekansio}\n   palvelimelta\n   {lapsipalvelin}")
+				else:
+					poistettu = False
+					for i in range(5):
+						poistettu = kfun.etapoisto(False, lapsipalvelin, lahdekansio)
+						if poistettu:
+							poistetut_kansiot.append(indeksi)
+							break
 			# Lokaali tiedosto
 			else:
-				os.remove(lahdekansio)
-	i = len(poistetut_kansiot)-1
-	while i >= 0:
-		p = lapsipuu.alikansiot.pop(i)
-		i -= 1
+				if kvak.TESTIMOODI:
+					print(f"Poista kansio\n   {lahdekansio}\n   lokaalilta kovalevyltä")
+				else:
+					os.remove(lahdekansio)
+	if not kvak.TESTIMOODI:
+		i = len(poistetut_kansiot)-1
+		while i >= 0:
+			p = lapsipuu.alikansiot.pop(i)
+			i -= 1
 
 	# Palauta (ehkä) muokattu lapsipuu
 	return(lapsipuu)
@@ -189,6 +209,3 @@ def synkkaa():
 		else:
 			print("Ei saatu kopioitua Pettanilta tiedostotietokantoja")
 	return(1)
-
-if __name__ == "__main__":
-	tarkista_onko_tietokannat()
