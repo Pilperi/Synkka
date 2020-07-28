@@ -1,6 +1,7 @@
 import os
 import json
 import vakiot_kansiovakiot as kvak
+import funktiot_kansiofunktiot as kfun
 
 class Tiedostopuu():
 	'''
@@ -28,11 +29,15 @@ class Tiedostopuu():
 		alikansiot alikansiolistaan.
 		'''
 		nykyinen_polku = self.hae_nykyinen_polku()
-		tiedostot, alikansiot = kfun.kansion_sisalto(self.hae_nykyinen_polku(), kvak.MUSATIEDOSTOT)
+		tiedostot, alikansiot = kfun.kansion_sisalto(self.hae_nykyinen_polku())
 		# Tiedostot tiedostolistaan (tässä vaihtelee, minkä tyyppinen tiedosto kyseessä)
-		if type(self.tiedostotyyppi) is type:
+		if self.tiedostotyyppi is not None:
 			for tiedosto in tiedostot:
-				self.tiedostot.append(self.tiedostotyyppi(os.path.join(self.hae_nykyinen_polku(), tiedosto)))
+				# print(tiedosto)
+				kuvaus = self.tiedostotyyppi(kohteesta=os.path.join(self.hae_nykyinen_polku(), tiedosto))
+				# Vain käyvät tiedostot
+				if kuvaus:
+					self.tiedostot.append(kuvaus)
 		# Alikansiot yhtä tasoa syvemmällä, ole näiden 'edellinenkansio'
 		for kansio in alikansiot:
 			puu = Tiedostopuu(kansio, self, self.syvennystaso+1, tiedostotyyppi=self.tiedostotyyppi)

@@ -17,26 +17,26 @@ Väännän nyt uuden version, jossa
 
 Tehtäviä asioita:
 
-	[ ] Tiedostotyypin määrittely (vrt. Biisi-luokka musasynkassa)
-		[ ] Tiedostonimi
-		[ ] Lisäyspäivä
-		[ ] Hashi (?)
-	[ ] Synkkafunktiot pyörimään Tiedostopuilla
-	[ ] Kansiomääritelmät, mitä on missäkin ja mihin tietokantatiedostoon pitäisi tallentaa
+	[x] Tiedostotyypin määrittely (vrt. Biisi-luokka musasynkassa)
+		[x] Tiedostonimi
+		[x] Lisäyspäivä
+		[x] Hashi (?)
+	[/] Synkkafunktiot pyörimään Tiedostopuilla
+		[x] Puiden vertailu toisiinsa
+		[ ] Lokaalin puun päivittäminen
+	[/] Kansiomääritelmät, mitä on missäkin ja mihin tietokantatiedostoon pitäisi tallentaa
 		[/] Oman huoneen kone
 			[x] Lokaalit tiedostokansiot
-			[ ] Pettanin tiedostokansiot
-			[ ] Lokaalit tietokannat
-			[ ] Pettanin tietokannat
+			[/] Lokaalit tietokannat
+			[x] Pettanin tietokannat
 		[/] Olkkarikone
 			[x] Lokaalit tiedostokansiot
-			[ ] Pettanin tiedostokansiot
 			[ ] Lokaalit tietokannat
-			[ ] Pettanin tietokannat
+			[x] Pettanin tietokannat
 		[/] Pettankone
 			[x] Lokaalit tiedostokansiot
-			[ ] Lokaalit tietokannat
+			[x] Lokaalit tietokannat
 
 
 STATUS:
-	- Asiat vielä ihan sikin sokin eikä varmaan toimi millään tasolla (outoa jos toimis)
+	- Asiat jokseenkin kasassa, täytyy tehdä testiajoja ja katsoa mikä kaikki on rikki

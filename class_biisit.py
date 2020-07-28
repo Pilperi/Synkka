@@ -196,6 +196,15 @@ class Biisi():
 					}
 		return(json.dumps(diktiversio))
 
+	def __bool__(self):
+		'''
+		Jos tiedoston jokin perustiedoista
+		(ihan tosi perustiedoista) ei ole
+		määritelty, biisiä ei ole kunnolla määritelty.
+		'''
+		if None in [self.tiedostonimi, self.lisayspaiva]:
+			return(False)
+		return(True)
 
 class Hakukriteerit:
 	'''
