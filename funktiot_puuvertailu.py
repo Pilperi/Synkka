@@ -197,14 +197,14 @@ def synkkaa():
 			if kvak.VOIMASUHTEET[kansiotyyppi][0]:
 				puu_pettan = vertaa_puita(isantapuu=puu_lokaali, isantapalvelin=None, lapsipuu=puu_pettan, lapsipalvelin="pettankone")
 				f = open(f"pettan_{kansiotyyppi}.tietokanta", "w+")
-				f.write(puu_pettan)
+				f.write(str(puu_pettan))
 				f.close()
 
 			# Pettani masteri
 			else:
 				puu_lokaali = vertaa_puita(isantapuu=puu_pettan, isantapalvelin="pettankone", lapsipuu=puu_lokaali, lapsipalvelin=None)
 				f = open(lokaali_tietokanta, "w+")
-				f.write(puu_lokaali)
+				f.write(str(puu_lokaali))
 				f.close()
 		else:
 			print("Ei saatu kopioitua Pettanilta tiedostotietokantoja")
