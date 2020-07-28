@@ -23,7 +23,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 
 	# Tiedosto pitäisi olla ja puuttuu tai on vanhentunut: kopioi
 	for tiedosto in isantapuu.tiedostot:
-		if not any([a.tiedostonimi==tiedosto.tiedostonimi and a.lisayspaiva>=tiedosto.lisayspaiva for a in lapsipuu.tiedostot if a]):
+		if not any([a.tiedostonimi==tiedosto.tiedostonimi and a.lisayspaiva>=tiedosto.lisayspaiva for a in lapsipuu.tiedostot]):
 			lahdetiedosto = os.path.join(isantapuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
 			if type(isantapalvelin) is str:
 				lahdetiedosto = "{}:{}".format(isantapalvelin, lahdetiedosto)
