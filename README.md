@@ -23,7 +23,7 @@ Tehtäviä asioita:
 		[x] Hashi (?)
 	[/] Synkkafunktiot pyörimään Tiedostopuilla
 		[x] Puiden vertailu toisiinsa
-		[ ] Lokaalin puun päivittäminen
+		[/] Lokaalin puun päivittäminen
 	[/] Kansiomääritelmät, mitä on missäkin ja mihin tietokantatiedostoon pitäisi tallentaa
 		[/] Oman huoneen kone
 			[x] Lokaalit tiedostokansiot
@@ -31,12 +31,12 @@ Tehtäviä asioita:
 			[x] Pettanin tietokannat
 		[/] Olkkarikone
 			[x] Lokaalit tiedostokansiot
-			[ ] Lokaalit tietokannat
+			[x] Lokaalit tietokannat
 			[x] Pettanin tietokannat
-		[/] Pettankone
+		[x] Pettankone
 			[x] Lokaalit tiedostokansiot
 			[x] Lokaalit tietokannat
 
 
 STATUS:
-	- Asiat jokseenkin kasassa, täytyy tehdä testiajoja ja katsoa mikä kaikki on rikki
+	- Asiat aikalailla kunnossa, kirjoitushetkellä puskee automagisoidusti kamaa Pettanille
