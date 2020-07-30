@@ -1,11 +1,13 @@
 import os
+import shutil
 import vakiot_kansiovakiot as kvak
 import funktiot_kansiofunktiot as kfun
+import funktiot_logifunktiot as logfun
 from class_tiedosto import Tiedosto
 from class_biisit import Biisi
 from class_tiedostopuu import Tiedostopuu
 
-def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvelin=None, tulosta=False):
+def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvelin=None, tulosta=False, logitiedosto=None):
 	'''
 	Vertaa lapsipuuta isäntäpuuhun.
 	Jos lapsipuussa on kansioita tai tiedostoja jotka
@@ -24,13 +26,16 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 	# Tiedosto pitäisi olla ja puuttuu tai on vanhentunut: kopioi
 	for tiedosto in isantapuu.tiedostot:
 		if not any([a.tiedostonimi==tiedosto.tiedostonimi and a.lisayspaiva>=tiedosto.lisayspaiva for a in lapsipuu.tiedostot]):
-			lahdetiedosto = os.path.join(isantapuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
+			# lahdetiedosto = os.path.join(isantapuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
+			lahdetiedosto = isantapuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			if type(isantapalvelin) is str:
 				lahdetiedosto = "{}:{}".format(isantapalvelin, lahdetiedosto)
-			kohdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
+			# kohdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
+			kohdetiedosto = lapsipuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			if type(lapsipalvelin) is str:
 				kohdetiedosto = "{}:{}".format(lapsipalvelin, tiedosto.tiedostonimi)
 			# Siirrä
+			logfun.kirjaa(logitiedosto, f"Lataa tiedosto\n   {lahdetiedosto}\n   kohteeseen\n   {kohdetiedosto}", 3)
 			if kvak.TESTIMOODI:
 				print(f"Lataa tiedosto\n   {lahdetiedosto}\n   kohteeseen\n   {kohdetiedosto}")
 				break
@@ -40,14 +45,17 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 					siirrettiin = kfun.lataa(True, lahdetiedosto, kohdetiedosto)
 					if siirrettiin:
 						lapsipuu.tiedostot.append(tiedosto)
+						logfun.kirjaa(logitiedosto, "Siirrettiin.", 3)
 						break
 	# Tiedostoa ei pitäisi olla: poista
 	poistetut_tiedostot = []
 	for indeksi,tiedosto in enumerate(lapsipuu.tiedostot):
 		if not any([a.tiedostonimi==tiedosto.tiedostonimi for a in isantapuu.tiedostot]):
-			lahdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
+			# lahdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
+			lahdetiedosto = lapsipuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			# Tiedosto etäpalvelimella
 			if type(lapsipalvelin) is str:
+				logfun.kirjaa(logitiedosto, f"Poista tiedosto\n   {lahdetiedosto}\n   palvelimelta\n   {lapsipalvelin}", 3)
 				if kvak.TESTIMOODI:
 					print(f"Poista tiedosto\n   {lahdetiedosto}\n   palvelimelta\n   {lapsipalvelin}")
 				else:
@@ -59,6 +67,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 							break
 			# Lokaali tiedosto
 			else:
+				logfun.kirjaa(logitiedosto, f"Poista tiedosto\n   {lahdetiedosto}\n   lokaalilta kovalevyltä", 3)
 				if kvak.TESTIMOODI:
 					print(f"Poista tiedosto\n   {lahdetiedosto}\n   lokaalilta kovalevyltä")
 				else:
@@ -79,13 +88,16 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 				molemmissa = True
 		# Ei ole lapsipuussa: kopioi
 		if not molemmissa:
-			lahdekansio = os.path.join(isantapuu.hae_nykyinen_polku(), alikansio.kansio)
+			# lahdekansio = os.path.join(isantapuu.hae_nykyinen_polku(), alikansio.kansio)
+			lahdekansio = isantapuu.hae_nykyinen_polku() + alikansio.kansio # / lopussa
 			if type(isantapalvelin) is str:
 				lahdekansio = "{}:{}".format(isantapalvelin, lahdekansio)
-			kohdekansio = os.path.join(lapsipuu.hae_nykyinen_polku(), alikansio.kansio)
+			# kohdekansio = os.path.join(lapsipuu.hae_nykyinen_polku(), alikansio.kansio)
+			kohdekansio = lapsipuu.hae_nykyinen_polku() + alikansio.kansio
 			if type(lapsipalvelin) is str:
-				kohdekansio = "{}:{}".format(lapsipalvelin, alikansio.kansio)
+				kohdekansio = "{}:{}".format(lapsipalvelin, kohdekansio)
 			# Siirrä
+			logfun.kirjaa(logitiedosto, f"Kopioi kansio\n   {lahdekansio}\n   kohteeseen\n   {kohdekansio}", 3)
 			if kvak.TESTIMOODI:
 				print(f"Kopioi kansio\n   {lahdekansio}\n   kohteeseen\n   {kohdekansio}")
 			else:
@@ -105,9 +117,11 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 	poistetut_kansiot = []
 	for indeksi,alikansio in enumerate(lapsipuu.alikansiot):
 		if not any([a.kansio==alikansio.kansio for a in isantapuu.alikansiot]):
-			lahdekansio = os.path.join(lapsipuu.hae_nykyinen_polku(), alikansio.kansio)
+			# lahdekansio = os.path.join(lapsipuu.hae_nykyinen_polku(), alikansio.kansio)
+			lahdekansio = lapsipuu.hae_nykyinen_polku() + alikansio.kansio
 			# Tiedosto etäpalvelimella
 			if type(lapsipalvelin) is str:
+				logfun.kirjaa(logitiedosto, f"Poista kansio\n   {lahdekansio}\n   palvelimelta\n   {lapsipalvelin}", 3)
 				if kvak.TESTIMOODI:
 					print(f"Poista kansio\n   {lahdekansio}\n   palvelimelta\n   {lapsipalvelin}")
 				else:
@@ -119,6 +133,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 							break
 			# Lokaali tiedosto
 			else:
+				logfun.kirjaa(logitiedosto, f"Poista kansio\n   {lahdekansio}\n   lokaalilta kovalevyltä", 3)
 				if kvak.TESTIMOODI:
 					print(f"Poista kansio\n   {lahdekansio}\n   lokaalilta kovalevyltä")
 				else:
@@ -147,7 +162,7 @@ def kasaa_tietokanta(kansiotyyppi):
 		f.write(str(puu))
 		f.close()
 
-def tarkista_onko_tietokannat():
+def tarkista_onko_tietokannat(logitiedosto=None):
 	'''
 	Tarkista kustakin tietokantatyypistä, onko sen tiedot kirjattu
 	vai eikö ole. Jos ei, aja 'kasaa_tietokanta()'
@@ -155,17 +170,110 @@ def tarkista_onko_tietokannat():
 	for kansiotyyppi in kvak.LOKAALIT_TIETOKANNAT:
 		if any([a and not os.path.exists(a) for a in kvak.LOKAALIT_TIETOKANNAT[kansiotyyppi]]):
 			print(f"Paikallista {kansiotyyppi}-tietokantaa ei oltu määritelty, määritetään...")
+			logfun.kirjaa(logitiedosto, f"Paikallista {kansiotyyppi}-tietokantaa ei oltu määritelty, määritetään...", 3)
 			kasaa_tietokanta(kansiotyyppi)
 			print("\tMääritetty")
+			logfun.kirjaa(logitiedosto, "Määritetty", 5)
 
-def synkkaa():
+def paivita_puu(puu, logitiedosto=None):
+	'''
+	Päivitä paikallisen tietokantatiedoston puu ajan tasalle.
+	Rekursiivinen alirutiini funktiolle 'paivita_paikalliset_tietokannat()'
+	'''
+	# Katsotaan mitä puun kansion alla oikeasti on (tiedostot ja kansiot)
+	lok_tied, lok_kans = kfun.kansion_sisalto(puu.hae_nykyinen_polku())
+	# Puussa tiedostoja jota ei oikeasti ole olemassa: poista
+	poistettavat = []
+	for p,puutiedosto in enumerate(puu.tiedostot):
+		if puutiedosto.tiedostonimi not in lok_tied:
+			logfun.kirjaa(logitiedosto, f"Tiedostoa {puutiedosto.tiedostonimi} ei enää ole, poista kirjastosta.", 3)
+			poistettavat.append(p)
+	if poistettavat:
+		poistettavat.reverse()
+		for p in poistettavat:
+			puu.tiedostot.pop(p)
+		poistettavat = []
+	# Kansiossa tiedostoja joita ei ole puussa: lisää
+	for paikallinen_tiedosto in lok_tied:
+		if paikallinen_tiedosto not in [a.tiedostonimi for a in puu.tiedostot]:
+			# Biisi
+			if puu.tiedostotyyppi is Biisi and kfun.paate(paikallinen_tiedosto)[1] in kvak.MUSATIEDOSTOT:
+				tiedosto = Biisi(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
+				logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} ei ole tietokannassa, lisätään.", 3)
+				puu.tiedostot.append(tiedosto)
+			# Yleinen tiedosto
+			elif puu.tiedostotyyppi is not Biisi:
+				tiedosto = Tiedosto(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
+				logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} ei ole tietokannassa, lisätään.", 3)
+				puu.tiedostot.append(tiedosto)
+	# Kansiot rekursiivisesti silloin kun aihetta
+	for p,puukansio in enumerate([a.kansio for a in puu.alikansiot]):
+		# Puussa kansioita joita ei oikeasti ole: poista
+		if puukansio not in lok_kans:
+			logfun.kirjaa(logitiedosto, f"Kansiota {puukansio} ei enää ole, poista kirjastosta.", 3)
+			poistettavat.append(p)
+		# On tietokannassa: sukella sisään ja katso ajantasaisuus
+		else:
+			logfun.kirjaa(logitiedosto, f"Tarkistetaan alikansion {puukansio} ajantasaisuus.")
+			puu.alikansiot[p] = paivita_puu(puu.alikansiot[p], logitiedosto=logitiedosto)
+	if poistettavat:
+		poistettavat.reverse()
+		for p in poistettavat:
+			puu.alikansiot.pop(p)
+	# Tietokannasta puuttuvat kansiot: lisää
+	for puuttuvakansio in [a for a in lok_kans if a not in [b.kansio for b in puu.alikansiot]]:
+		logfun.kirjaa(logitiedosto, f"Kansiota {puuttuvakansio} ei ole tietokannassa, lisätään.", 3)
+		uusipuu = Tiedostopuu(kansio=puuttuvakansio, edellinenkansio=puu, syvennystaso=puu.syvennystaso+1, tiedostotyyppi=puu.tiedostotyyppi)
+		uusipuu.kansoita()
+		puu.alikaniot.append(uusipuu)
+	return(puu)
+
+
+
+def paivita_paikalliset_tietokannat(logitiedosto=None):
+	'''
+	Katso, onko paikallinen tietokantatiedosto ajan tasalla.
+	'''
+	# Tietokantatyyppi kerrallaan
+	for kansiotyyppi in kvak.LOKAALIT_TIETOKANNAT:
+		logfun.kirjaa(logitiedosto, f"Päivitetään paikallinen tietokanta {kansiotyyppi}.")
+		tiedostotyyppi = Tiedosto
+		if kansiotyyppi == "Musiikki":
+			tiedostotyyppi = Biisi
+		# Tietokantatiedosto kerrallaan
+		for tietokantatiedosto in kvak.LOKAALIT_TIETOKANNAT[kansiotyyppi]:
+			# Varmuuskopioi
+			shutil.copy(tietokantatiedosto, "{}.bk".format(tietokantatiedosto))
+			logfun.kirjaa(logitiedosto, f"{kansiotyyppi}:{tietokantatiedosto} aloita")
+			puu = Tiedostopuu(tiedostotyyppi=tiedostotyyppi)
+			f = open(tietokantatiedosto, "r")
+			puu.lue_tiedostosta(f)
+			f.close()
+			puu = paivita_puu(puu, logitiedosto)
+			f = open(tietokantatiedosto, "w+")
+			f.write(str(puu))
+			f.close()
+			os.remove("{}.bk".format(tietokantatiedosto))
+			logfun.kirjaa(logitiedosto, f"{kansiotyyppi}:{tietokantatiedosto} valmis")
+
+
+def synkkaa(logitiedosto=None):
+	'''
+	Synkkaa paikalliset tiedostot ulkoisten tiedostojen kanssa.
+	Se, mikä liikkuu mihinkin suuntaan on määritelty kansiovakioiden puolella.
+	'''
 	# Ei tehdä mitään jos asioita ei ole määritelty
 	if None in [kvak.VOIMASUHTEET, kvak.LOKAALIT_TIETOKANNAT]:
 		print("Tietokonetta ei määritelty kansiovakioissa, ei tehdä mitään.")
+		logfun.kirjaa(logitiedosto, "Tietokonetta ei määritelty kansiovakioissa, ei tehdä mitään.")
 		return(0)
 
 	# Varmistetaan että tietokannat on olemassa
-	tarkista_onko_tietokannat()
+	logfun.kirjaa(logitiedosto, "Tarkistetaan paikallisten tietokantojen olemassaolo.")
+	tarkista_onko_tietokannat(logitiedosto=logitiedosto)
+	# Varmistetaan että ovat ajan tasalla
+	logfun.kirjaa(logitiedosto, "Tarkistetaan paikallisten tietokantojen ajantasaisuus.")
+	paivita_paikalliset_tietokannat(logitiedosto=logitiedosto)
 
 	# Kullekin tiedostokansiolle: kopioi Pettanin tietokantatiedosto ja vertaa sitä omaan
 	for kansiotyyppi in kvak.LOKAALIT_TIETOKANNAT:
@@ -179,6 +287,7 @@ def synkkaa():
 				break
 		if siirretty:
 			# Lue tietokantatiedostoista
+			logfun.kirjaa(logitiedosto, f"Tietokanta \"{kansiotyyppi}\" kopioitu pettanilta")
 			if kansiotyyppi == "Musiikki":
 				puu_lokaali = Tiedostopuu(tiedostotyyppi=Biisi)
 				puu_pettan  = Tiedostopuu(tiedostotyyppi=Biisi)
@@ -187,25 +296,30 @@ def synkkaa():
 				puu_pettan  = Tiedostopuu(tiedostotyyppi=Tiedosto)
 			f = open(lokaali_tietokanta, "r")
 			puu_lokaali.lue_tiedostosta(f)
+			logfun.kirjaa(logitiedosto, f"Paikallinen puu {lokaali_tietokanta} luettu.")
 			f.close()
 			f = open(f"pettan_{kansiotyyppi}.tietokanta", "r")
 			puu_pettan.lue_tiedostosta(f)
+			logfun.kirjaa(logitiedosto, f"Pettanin puu {kansiotyyppi} luettu.")
 			f.close()
 
 			# Vertaa tietokantatiedostoja
 			# Paikallinen kone masteri
 			if kvak.VOIMASUHTEET[kansiotyyppi][0]:
-				puu_pettan = vertaa_puita(isantapuu=puu_lokaali, isantapalvelin=None, lapsipuu=puu_pettan, lapsipalvelin="pettankone")
+				logfun.kirjaa(logitiedosto, "Verrataan puita, paikallinen puu masteri.")
+				puu_pettan = vertaa_puita(isantapuu=puu_lokaali, isantapalvelin=None, lapsipuu=puu_pettan, lapsipalvelin="pettankone", logitiedosto=logitiedosto)
 				f = open(f"pettan_{kansiotyyppi}.tietokanta", "w+")
 				f.write(str(puu_pettan))
 				f.close()
 
 			# Pettani masteri
 			else:
-				puu_lokaali = vertaa_puita(isantapuu=puu_pettan, isantapalvelin="pettankone", lapsipuu=puu_lokaali, lapsipalvelin=None)
+				logfun.kirjaa(logitiedosto, "Verrataan puita, Pettani masteri.")
+				puu_lokaali = vertaa_puita(isantapuu=puu_pettan, isantapalvelin="pettankone", lapsipuu=puu_lokaali, lapsipalvelin=None, logitiedosto=logitiedosto)
 				f = open(lokaali_tietokanta, "w+")
 				f.write(str(puu_lokaali))
 				f.close()
 		else:
 			print("Ei saatu kopioitua Pettanilta tiedostotietokantoja")
+			logfun.kirjaa(logitiedosto, "Ei saatu kopioitua Pettanilta tiedostotietokantoja")
 	return(1)

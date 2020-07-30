@@ -7,6 +7,7 @@ import os
 
 # Tulosta komentoriville, älä poistele juttuja
 TESTIMOODI = True
+LOGITIEDOSTO = "logi"
 
 MUSATIEDOSTOT = ["mp3", "flac", "wma"]
 KIELLETYT = []
