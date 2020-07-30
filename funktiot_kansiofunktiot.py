@@ -4,17 +4,44 @@ import subprocess
 import hashlib
 import vakiot_kansiovakiot as kvak
 
-def lataa(vainbiisi, servu, kansiopolku, kohde):
+def lataa(vaintiedosto, lahdepalvelin, lahdepolku, kohdepalvelin, kohdepolku):
 	'''
-	Lataa SCP:llä biisi tai kansio serveriltä 'servu.'
+	Lataa SCP:llä biisi tai kansio kansiopolusta (/lokaali/polku tai servu:/polku/servulla)
+	määränpäähän (/lokaali/polku tai servu:/polku/servulla)
 	'''
-	if vainbiisi:
-		koodi = subprocess.call(["scp", servu+":"+kansiopolku, kohde])
+	# Polku palvelimella
+	if lahdepalvelin:
+		kansiopolku = "{}:\"{}\"".format(lahdepalvelin, lahdepolku)
+	# Paikallinen polku
 	else:
-		koodi = subprocess.call(["scp","-r", servu+":"+kansiopolku, kohde])
+		# kansiopolku = "\"{}\"".format(lahdepolku)
+		kansiopolku = "{}".format(siisti_tiedostonimi(lahdepolku))
+	# Polku palvelimella
+	if kohdepalvelin:
+		kohde = "{}:\"{}\"".format(kohdepalvelin, kohdepolku)
+	# Paikallinen polku
+	else:
+		# kohde = "\"{}\"".format(kohdepolku)
+		kohde = "{}".format(siisti_tiedostonimi(kohdepolku))
+
+	# print(kansiopolku)
+	# print(kohde)
+	if vaintiedosto:
+		koodi = subprocess.call(["scp", "-T", kansiopolku, kohde])
+		# koodi = subprocess.call(["scp", kansiopolku, kohde])
+	else:
+		koodi = subprocess.call(["scp","-r", "-T", kansiopolku, kohde])
 	if koodi != 1:
 		return(True)
 	return(False)
+
+def siisti_tiedostonimi(nimi):
+	'''
+	Siisti tiedostonimen hankalat merkit scp-yhteensopiviksi,
+	koska ähhh.
+	'''
+	nimi == nimi.replace(" ", "\\ ").replace("\"", "\\\"").replace("!", "\\!")
+	return(nimi)
 
 def etapoisto(vaintiedosto, palvelin, tiedostopolku):
 	'''

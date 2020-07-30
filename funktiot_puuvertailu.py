@@ -28,21 +28,17 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 		if not any([a.tiedostonimi==tiedosto.tiedostonimi and a.lisayspaiva>=tiedosto.lisayspaiva for a in lapsipuu.tiedostot]):
 			# lahdetiedosto = os.path.join(isantapuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
 			lahdetiedosto = isantapuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
-			if type(isantapalvelin) is str:
-				lahdetiedosto = "{}:{}".format(isantapalvelin, lahdetiedosto)
 			# kohdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
-			kohdetiedosto = lapsipuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
-			if type(lapsipalvelin) is str:
-				kohdetiedosto = "{}:{}".format(lapsipalvelin, tiedosto.tiedostonimi)
+			kohdetiedosto = lapsipuu.hae_nykyinen_polku()
 			# Siirrä
 			logfun.kirjaa(logitiedosto, f"Lataa tiedosto\n   {lahdetiedosto}\n   kohteeseen\n   {kohdetiedosto}", 3)
+			print(f"Lataa tiedosto\n   {lahdetiedosto}\n   kohteeseen\n   {kohdetiedosto}")
 			if kvak.TESTIMOODI:
-				print(f"Lataa tiedosto\n   {lahdetiedosto}\n   kohteeseen\n   {kohdetiedosto}")
 				break
 			else:
 				siirrettiin = False
 				for yritys in range(5):
-					siirrettiin = kfun.lataa(True, lahdetiedosto, kohdetiedosto)
+					siirrettiin = kfun.lataa(True, isantapalvelin, lahdetiedosto, lapsipalvelin, kohdetiedosto)
 					if siirrettiin:
 						lapsipuu.tiedostot.append(tiedosto)
 						logfun.kirjaa(logitiedosto, "Siirrettiin.", 3)
@@ -52,13 +48,13 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 	for indeksi,tiedosto in enumerate(lapsipuu.tiedostot):
 		if not any([a.tiedostonimi==tiedosto.tiedostonimi for a in isantapuu.tiedostot]):
 			# lahdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
+			# lahdetiedosto = lapsipuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			lahdetiedosto = lapsipuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			# Tiedosto etäpalvelimella
 			if type(lapsipalvelin) is str:
 				logfun.kirjaa(logitiedosto, f"Poista tiedosto\n   {lahdetiedosto}\n   palvelimelta\n   {lapsipalvelin}", 3)
-				if kvak.TESTIMOODI:
-					print(f"Poista tiedosto\n   {lahdetiedosto}\n   palvelimelta\n   {lapsipalvelin}")
-				else:
+				print(f"Poista tiedosto\n   {lahdetiedosto}\n   palvelimelta\n   {lapsipalvelin}")
+				if not kvak.TESTIMOODI:
 					poistettu = False
 					for i in range(5):
 						poistettu = kfun.etapoisto(True, lapsipalvelin, lahdetiedosto)
@@ -68,9 +64,8 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 			# Lokaali tiedosto
 			else:
 				logfun.kirjaa(logitiedosto, f"Poista tiedosto\n   {lahdetiedosto}\n   lokaalilta kovalevyltä", 3)
-				if kvak.TESTIMOODI:
-					print(f"Poista tiedosto\n   {lahdetiedosto}\n   lokaalilta kovalevyltä")
-				else:
+				print(f"Poista tiedosto\n   {lahdetiedosto}\n   lokaalilta kovalevyltä")
+				if not kvak.TESTIMOODI:
 					os.remove(lahdetiedosto)
 	i = len(poistetut_tiedostot)-1
 	while i >= 0:
@@ -90,20 +85,16 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 		if not molemmissa:
 			# lahdekansio = os.path.join(isantapuu.hae_nykyinen_polku(), alikansio.kansio)
 			lahdekansio = isantapuu.hae_nykyinen_polku() + alikansio.kansio # / lopussa
-			if type(isantapalvelin) is str:
-				lahdekansio = "{}:{}".format(isantapalvelin, lahdekansio)
 			# kohdekansio = os.path.join(lapsipuu.hae_nykyinen_polku(), alikansio.kansio)
-			kohdekansio = lapsipuu.hae_nykyinen_polku() + alikansio.kansio
-			if type(lapsipalvelin) is str:
-				kohdekansio = "{}:{}".format(lapsipalvelin, kohdekansio)
+			# kohdekansio = lapsipuu.hae_nykyinen_polku() + alikansio.kansio
+			kohdekansio = lapsipuu.hae_nykyinen_polku()
 			# Siirrä
 			logfun.kirjaa(logitiedosto, f"Kopioi kansio\n   {lahdekansio}\n   kohteeseen\n   {kohdekansio}", 3)
-			if kvak.TESTIMOODI:
-				print(f"Kopioi kansio\n   {lahdekansio}\n   kohteeseen\n   {kohdekansio}")
-			else:
+			print(f"Kopioi kansio\n   {lahdekansio}\n   kohteeseen\n   {kohdekansio}")
+			if not kvak.TESTIMOODI:
 				siirrettiin = False
 				for yritys in range(5):
-					siirrettiin = kfun.lataa(False, lahdekansio, kohdekansio)
+					siirrettiin = kfun.lataa(False, isantapalvelin, lahdekansio, lapsipalvelin, kohdekansio)
 					if siirrettiin:
 						# Luo Tiedostopuu alikansiosta.
 						# Voitaisiin vaan ottaa suoraan alikansiosta versio jonka isäntä on lapsipuun
@@ -122,9 +113,8 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 			# Tiedosto etäpalvelimella
 			if type(lapsipalvelin) is str:
 				logfun.kirjaa(logitiedosto, f"Poista kansio\n   {lahdekansio}\n   palvelimelta\n   {lapsipalvelin}", 3)
-				if kvak.TESTIMOODI:
-					print(f"Poista kansio\n   {lahdekansio}\n   palvelimelta\n   {lapsipalvelin}")
-				else:
+				print(f"Poista kansio\n   {lahdekansio}\n   palvelimelta\n   {lapsipalvelin}")
+				if not kvak.TESTIMOODI:
 					poistettu = False
 					for i in range(5):
 						poistettu = kfun.etapoisto(False, lapsipalvelin, lahdekansio)
@@ -134,9 +124,8 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 			# Lokaali tiedosto
 			else:
 				logfun.kirjaa(logitiedosto, f"Poista kansio\n   {lahdekansio}\n   lokaalilta kovalevyltä", 3)
-				if kvak.TESTIMOODI:
-					print(f"Poista kansio\n   {lahdekansio}\n   lokaalilta kovalevyltä")
-				else:
+				print(f"Poista kansio\n   {lahdekansio}\n   lokaalilta kovalevyltä")
+				if not kvak.TESTIMOODI:
 					os.remove(lahdekansio)
 	if not kvak.TESTIMOODI:
 		i = len(poistetut_kansiot)-1
@@ -282,7 +271,7 @@ def synkkaa(logitiedosto=None):
 		# Yritä siirtää max. viisi kertaa
 		siirretty = False
 		for yritys in range(5):
-			siirretty = kfun.lataa(True, "pettankone", pettanin_tietokanta[kvak.VOIMASUHTEET[kansiotyyppi][1]], f"pettan_{kansiotyyppi}.tietokanta")
+			siirretty = kfun.lataa(True, "pettankone", pettanin_tietokanta[kvak.VOIMASUHTEET[kansiotyyppi][1]], None, f"pettan_{kansiotyyppi}.tietokanta")
 			if siirretty:
 				break
 		if siirretty:

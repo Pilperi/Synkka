@@ -6,7 +6,7 @@ relevanttien kansioiden sijainnit eri tietokoneilla.
 import os
 
 # Tulosta komentoriville, älä poistele juttuja
-TESTIMOODI = True
+TESTIMOODI = False
 LOGITIEDOSTO = "logi"
 
 MUSATIEDOSTOT = ["mp3", "flac", "wma"]
@@ -46,7 +46,7 @@ KANSIOT = {
 		                     "Screenshots": ["/mnt/data/Jouni/Screenshots/Jaotellut/"]
 		                     },
 		  "Olkkari":        {"Musiikki":     ["/mnt/Data/Jouni/Musiikki/"],
-                             "INTERNET":     ["/mnt/home/olkkari/Pictures/INTERNET/"],
+                             "INTERNET":     ["/home/olkkari/Pictures/INTERNET/"],
 		                     "Screenshots":  ["/mnt/Data/Jouni/Screenshots/Jaotellut/"]
 		                     },
 		}
