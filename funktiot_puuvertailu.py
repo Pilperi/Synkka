@@ -203,7 +203,7 @@ def paivita_puu(puu, logitiedosto=None):
 			poistettavat.append(p)
 		# On tietokannassa: sukella sisään ja katso ajantasaisuus
 		else:
-			logfun.kirjaa(logitiedosto, f"Tarkistetaan alikansion {puukansio} ajantasaisuus.")
+			# logfun.kirjaa(logitiedosto, f"Tarkistetaan alikansion {puukansio} ajantasaisuus.")
 			puu.alikansiot[p] = paivita_puu(puu.alikansiot[p], logitiedosto=logitiedosto)
 	if poistettavat:
 		poistettavat.reverse()
