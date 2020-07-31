@@ -40,17 +40,19 @@ def siisti_tiedostonimi(nimi):
 	Siisti tiedostonimen hankalat merkit scp-yhteensopiviksi,
 	koska ähhh.
 	'''
-	nimi == nimi.replace(" ", "\\ ").replace("\"", "\\\"").replace("!", "\\!")
+	nimi == nimi.replace(" ", "\\ ").replace("\"", "\\\"").replace("!", "\\!").replace("\'", "\\\'")
 	return(nimi)
 
 def etapoisto(vaintiedosto, palvelin, tiedostopolku):
 	'''
 	Poista etäpalvelimella oleva tiedosto SSH yli
 	'''
-	koodi = subprocess.call(["ssh", palvelin, "rm{:s} \"{:s}\"".format(" -r"*(not(vaintiedosto)), tiedostopolku)])
-	if koodi != 1:
-		return(True)
-	return(False)
+	tiedostopolku = siisti_tiedostonimi(tiedostopolku)
+	koodi = subprocess.run(["ssh", palvelin, "rm{:s} \"{:s}\"".format(" -r"*(not(vaintiedosto)), tiedostopolku)], capture_output=True)
+	# print(koodi)
+	if koodi.returncode != 1:
+		return(True, "")
+	return(False, str(koodi.stderr))
 
 def hanki_hash(tiedosto, binmode=True):
 	'''

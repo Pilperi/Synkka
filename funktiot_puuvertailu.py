@@ -57,8 +57,8 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 				if not kvak.TESTIMOODI:
 					poistettu = False
 					for i in range(5):
-						poistettu = kfun.etapoisto(True, lapsipalvelin, lahdetiedosto)
-						if poistettu:
+						poistettu, virhe = kfun.etapoisto(True, lapsipalvelin, lahdetiedosto)
+						if poistettu or "No such file or directory" in virhe:
 							poistetut_tiedostot.append(indeksi)
 							break
 			# Lokaali tiedosto
@@ -78,7 +78,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 		molemmissa = False
 		for indeksi,lapsi_alikansio in enumerate(lapsipuu.alikansiot):
 			if alikansio.kansio == lapsi_alikansio.kansio:
-				lapsi_alikansio = vertaa_puita(alikansio, isantapalvelin, lapsi_alikansio, lapsipalvelin)
+				lapsi_alikansio = vertaa_puita(alikansio, isantapalvelin, lapsi_alikansio, lapsipalvelin, logitiedosto=logitiedosto)
 				lapsipuu.alikansiot[indeksi] = lapsi_alikansio
 				molemmissa = True
 		# Ei ole lapsipuussa: kopioi
@@ -117,8 +117,8 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 				if not kvak.TESTIMOODI:
 					poistettu = False
 					for i in range(5):
-						poistettu = kfun.etapoisto(False, lapsipalvelin, lahdekansio)
-						if poistettu:
+						poistettu, virhe = kfun.etapoisto(False, lapsipalvelin, lahdekansio)
+						if poistettu or "No such file or directory" in virhe:
 							poistetut_kansiot.append(indeksi)
 							break
 			# Lokaali tiedosto
@@ -126,7 +126,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 				logfun.kirjaa(logitiedosto, f"Poista kansio\n   {lahdekansio}\n   lokaalilta kovalevyltä", 3)
 				print(f"Poista kansio\n   {lahdekansio}\n   lokaalilta kovalevyltä")
 				if not kvak.TESTIMOODI:
-					os.remove(lahdekansio)
+					shutil.rmtree(lahdekansio)
 	if not kvak.TESTIMOODI:
 		i = len(poistetut_kansiot)-1
 		while i >= 0:
@@ -214,7 +214,7 @@ def paivita_puu(puu, logitiedosto=None):
 		logfun.kirjaa(logitiedosto, f"Kansiota {puuttuvakansio} ei ole tietokannassa, lisätään.", 3)
 		uusipuu = Tiedostopuu(kansio=puuttuvakansio, edellinenkansio=puu, syvennystaso=puu.syvennystaso+1, tiedostotyyppi=puu.tiedostotyyppi)
 		uusipuu.kansoita()
-		puu.alikaniot.append(uusipuu)
+		puu.alikansiot.append(uusipuu)
 	return(puu)
 
 
@@ -300,15 +300,6 @@ def synkkaa(logitiedosto=None):
 				f = open(f"pettan_{kansiotyyppi}.tietokanta", "w+")
 				f.write(str(puu_pettan))
 				f.close()
-				# Päivitä Pettanilla sijaitseva tietokantatiedosto
-				logfun.kirjaa(logitiedosto, "Palauta Pettanille puu pettan_{}.tietokanta nimellä {}.".format(kansiotyyppi, pettanin_tietokanta[kvak.VOIMASUHTEET[kansiotyyppi][1]]))
-				siirretty = False
-				for yritys in range(5):
-					siirretty = kfun.lataa(True, None, f"pettan_{kansiotyyppi}.tietokanta", "pettankone", pettanin_tietokanta[kvak.VOIMASUHTEET[kansiotyyppi][1]])
-					if siirretty:
-						break
-				if siirretty:
-					logfun.kirjaa(logitiedosto, "Palautettu.")
 
 			# Pettani masteri
 			else:
@@ -317,6 +308,18 @@ def synkkaa(logitiedosto=None):
 				f = open(lokaali_tietokanta, "w+")
 				f.write(str(puu_lokaali))
 				f.close()
+
+			# Päivitä Pettanilla sijaitseva tietokantatiedosto
+			logfun.kirjaa(logitiedosto, "Palauta Pettanille puu pettan_{}.tietokanta nimellä {}.".format(kansiotyyppi, pettanin_tietokanta[kvak.VOIMASUHTEET[kansiotyyppi][1]]))
+			siirretty = False
+			for yritys in range(5):
+				siirretty = kfun.lataa(True, None, f"pettan_{kansiotyyppi}.tietokanta", "pettankone", pettanin_tietokanta[kvak.VOIMASUHTEET[kansiotyyppi][1]])
+				if siirretty:
+					break
+			if siirretty:
+				logfun.kirjaa(logitiedosto, "Palautettu.")
+			logfun.kirjaa(logitiedosto, f"Poista pettanilta napattu tiedosto pettan_{kansiotyyppi}.tietokanta")
+			# os.remove(f"pettan_{kansiotyyppi}.tietokanta")
 		else:
 			print("Ei saatu kopioitua Pettanilta tiedostotietokantoja")
 			logfun.kirjaa(logitiedosto, "Ei saatu kopioitua Pettanilta tiedostotietokantoja")
