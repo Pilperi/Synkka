@@ -300,6 +300,15 @@ def synkkaa(logitiedosto=None):
 				f = open(f"pettan_{kansiotyyppi}.tietokanta", "w+")
 				f.write(str(puu_pettan))
 				f.close()
+				# Päivitä Pettanilla sijaitseva tietokantatiedosto
+				logfun.kirjaa(logitiedosto, "Palauta Pettanille puu pettan_{}.tietokanta nimellä {}.".format(kansiotyyppi, pettanin_tietokanta[kvak.VOIMASUHTEET[kansiotyyppi][1]]))
+				siirretty = False
+				for yritys in range(5):
+					siirretty = kfun.lataa(True, None, f"pettan_{kansiotyyppi}.tietokanta", "pettankone", pettanin_tietokanta[kvak.VOIMASUHTEET[kansiotyyppi][1]])
+					if siirretty:
+						break
+				if siirretty:
+					logfun.kirjaa(logitiedosto, "Palautettu.")
 
 			# Pettani masteri
 			else:
