@@ -40,7 +40,7 @@ def siisti_tiedostonimi(nimi):
 	Siisti tiedostonimen hankalat merkit scp-yhteensopiviksi,
 	koska ähhh.
 	'''
-	nimi == nimi.replace(" ", "\\ ").replace("\"", "\\\"").replace("!", "\\!").replace("\'", "\\\'")
+	nimi == nimi.replace(" ", "\\ ").replace("\"", "\\\"").replace("!", "\\!").replace("\'", "\\\'").replace("`", "\\`")
 	return(nimi)
 
 def etapoisto(vaintiedosto, palvelin, tiedostopolku):
