@@ -43,6 +43,8 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 						lapsipuu.tiedostot.append(tiedosto)
 						logfun.kirjaa(logitiedosto, "Siirrettiin.", 3)
 						break
+					else:
+						logfun.kirjaa(logitiedosto, "Ei saatu siirrettyä :<", 3)
 	# Tiedostoa ei pitäisi olla: poista
 	poistetut_tiedostot = []
 	for indeksi,tiedosto in enumerate(lapsipuu.tiedostot):
@@ -81,6 +83,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 				lapsi_alikansio = vertaa_puita(alikansio, isantapalvelin, lapsi_alikansio, lapsipalvelin, logitiedosto=logitiedosto)
 				lapsipuu.alikansiot[indeksi] = lapsi_alikansio
 				molemmissa = True
+				break
 		# Ei ole lapsipuussa: kopioi
 		if not molemmissa:
 			# lahdekansio = os.path.join(isantapuu.hae_nykyinen_polku(), alikansio.kansio)
@@ -99,10 +102,13 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 						# Luo Tiedostopuu alikansiosta.
 						# Voitaisiin vaan ottaa suoraan alikansiosta versio jonka isäntä on lapsipuun
 						# kansio, mutta tällöin päiväykset menisivät ihan miten sattuu.
-						alikansiopuu = Tiedostopuu(kansio=alikansio.kansio, edellinenkansio=lapsipuu, syvennystaso=alikansio.syvennystaso+1, tiedostotyyppi=alikansio.tiedostotyyppi)
-						alikansiopuu.kansoita()
-						lapsipuu.alikansiot.append(alikansiopuu)
+						# alikansiopuu = Tiedostopuu(kansio=alikansio.kansio, edellinenkansio=lapsipuu, syvennystaso=alikansio.syvennystaso, tiedostotyyppi=alikansio.tiedostotyyppi)
+						# alikansiopuu.kansoita()
+						lapsipuu.alikansiot.append(alikansio)
+						logfun.kirjaa(logitiedosto, "kopioitu.", 3)
 						break
+					else:
+						logfun.kirjaa(logitiedosto, "Ei saatu siirrettyä :<", 3)
 
 	# Kansiota ei pitäisi olla: poista
 	poistetut_kansiot = []
@@ -318,8 +324,10 @@ def synkkaa(logitiedosto=None):
 					break
 			if siirretty:
 				logfun.kirjaa(logitiedosto, "Palautettu.")
+			else:
+				logfun.kirjaa(logitiedosto, "Ei saatu palautettua :<")
 			logfun.kirjaa(logitiedosto, f"Poista pettanilta napattu tiedosto pettan_{kansiotyyppi}.tietokanta")
-			# os.remove(f"pettan_{kansiotyyppi}.tietokanta")
+			os.remove(f"pettan_{kansiotyyppi}.tietokanta")
 		else:
 			print("Ei saatu kopioitua Pettanilta tiedostotietokantoja")
 			logfun.kirjaa(logitiedosto, "Ei saatu kopioitua Pettanilta tiedostotietokantoja")
