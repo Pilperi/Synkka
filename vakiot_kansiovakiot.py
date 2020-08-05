@@ -16,12 +16,14 @@ KIELLETYT = []
 LOKAALI_KONE = None
 if os.path.exists("/home/pilperi"):
 	LOKAALI_KONE = "Murakumo-linux"
+	LOGITIEDOSTO = "/home/pilperi/Scripts/Synkka/logi"
 if os.path.exists("C:\\"):
 	LOKAALI_KONE = "Murakumo-win"
 elif os.path.exists("/home/taira"):
 	LOKAALI_KONE = "Pettan"
 elif os.path.exists("/home/olkkari"):
 	LOKAALI_KONE = "Olkkari"
+	LOGITIEDOSTO = "/home/olkkari/Scripts/Synkka/logi"
 
 if LOKAALI_KONE is None:
 	print("Käytettävää tietokonetta ei kyetty määrittämään...")
