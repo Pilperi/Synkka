@@ -150,23 +150,37 @@ class Biisi():
 		kokoversio	= 0
 		vuosi		= 0
 		kuukausi	= 0
-		paivays		= 0
+		paiva		= 0
+		tunnit      = 0
+		minuutit    = 0
 		# Pilko annettu päiväys
 		if type(lue) in [int, str]:
 			stringiversio = str(lue)
-			if len(stringiversio) == 8 and all([a.isnumeric for a in stringiversio]):
-				kokoversio	= int(stringiversio)
-				vuosi		= int(stringiversio[:4])
-				kuukausi	= int(stringiversio[4:6])
-				paivays		= int(stringiversio[6:8])
+			if len(stringiversio) == 12 and all([a.isnumeric for a in stringiversio]):
+				kokoversio  = int(stringiversio)
+				vuosi       = int(stringiversio[:4])
+				kuukausi    = int(stringiversio[4:6])
+				paiva       = int(stringiversio[6:8])
+				tunnit      = int(stringiversio[8:10])
+				minuutit    = int(stringiversio[10:12])
+			# Vanha versio ilman tunteja ja minuutteja
+			elif len(stringiversio) == 8 and all([a.isnumeric for a in stringiversio]):
+				kokoversio  = int(stringiversio)*10000
+				vuosi       = int(stringiversio[:4])
+				kuukausi    = int(stringiversio[4:6])
+				paiva       = int(stringiversio[6:8])
+				tunnit      = 0
+				minuutit    = 0
 		# Nykyhetken päiväys
 		else:
 			paivays  = time.localtime()
 			vuosi    = paivays.tm_year
 			kuukausi = paivays.tm_mon
-			paivays  = paivays.tm_mday
-			kokoversio = int("{:04d}{:02d}{:02d}".format(vuosi,kuukausi,paivays))
-		return((kokoversio, (vuosi, kuukausi, paivays)))
+			paiva    = paivays.tm_mday
+			tunnit   = paivays.tm_hour
+			minuutit = paivays.tm_min
+			kokoversio = int("{:04d}{:02d}{:02d}{:02d}{:02d}".format(vuosi,kuukausi,paiva,tunnit,minuutit))
+		return((kokoversio, (vuosi, kuukausi, paiva, tunnit, minuutit)))
 
 	def lue_diktista(self, dikti):
 		'''

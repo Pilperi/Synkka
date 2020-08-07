@@ -1,5 +1,6 @@
 import os
 import shutil
+import time
 import subprocess
 import hashlib
 import vakiot_kansiovakiot as kvak
@@ -53,6 +54,16 @@ def etapoisto(vaintiedosto, palvelin, tiedostopolku):
 	if koodi.returncode != 1:
 		return(True, "")
 	return(False, str(koodi.stderr))
+
+def tiedoston_aikaleima(tiedosto):
+	'''
+	Muunna tiedoston muokkauspäivä Biisn/Tiedoston
+	aikaleiman muotoon vertailua varten.
+	'''
+	muokkausaika = 0
+	if os.path.exists(tiedosto):
+		muokkausaika = int(time.strftime('%Y%m%d%H%M', time.localtime(os.path.getmtime(tiedosto))))
+	return(muokkausaika)
 
 def hanki_hash(tiedosto, binmode=True):
 	'''

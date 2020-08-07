@@ -189,8 +189,13 @@ def paivita_puu(puu, logitiedosto=None):
 			puu.tiedostot.pop(p)
 		poistettavat = []
 	# Kansiossa tiedostoja joita ei ole puussa: lisää
+	# Kansioss tiedostoja jotka muuttuneet: päivitä
 	for paikallinen_tiedosto in lok_tied:
-		if paikallinen_tiedosto not in [a.tiedostonimi for a in puu.tiedostot]:
+		puuttuu     = paikallinen_tiedosto not in [a.tiedostonimi for a in puu.tiedostot]
+		lok_aika    = kfun.tiedoston_aikaleima(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
+		vanhentunut = any([a.lisayspaiva < lok_aika for a in puu.tiedostot if a.tiedostonimi == paikallinen_tiedosto])
+		# Lisää
+		if puuttuu:
 			# Biisi
 			if puu.tiedostotyyppi is Biisi and kfun.paate(paikallinen_tiedosto)[1] in kvak.MUSATIEDOSTOT:
 				tiedosto = Biisi(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
@@ -201,6 +206,24 @@ def paivita_puu(puu, logitiedosto=None):
 				tiedosto = Tiedosto(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
 				logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} ei ole tietokannassa, lisätään.", 3)
 				puu.tiedostot.append(tiedosto)
+		# Päivitä
+		elif vanhentunut:
+			for i,vanha in enumerate(puu.tiedostot):
+				if vanha.tiedostonimi == paikallinen_tiedosto:
+					# Biisi
+					if puu.tiedostotyyppi is Biisi and kfun.paate(paikallinen_tiedosto)[1] in kvak.MUSATIEDOSTOT:
+						tiedosto = Biisi(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
+						logfun.kirjaa(logitiedosto, f"Tiedosto {paikallinen_tiedosto} on muuttunut, päivitetään.", 3)
+						puu.tiedostot[i] = tiedosto
+					# Yleinen tiedosto
+					elif puu.tiedostotyyppi is not Biisi:
+						tiedosto = Tiedosto(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
+						logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} on muuttunut, päivitetään.", 3)
+						puu.tiedostot[i] = tiedosto
+					else:
+						logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} ei tarvitse seurata.", 3)
+						puu.tiedostot.pop(i)
+					break
 	# Kansiot rekursiivisesti silloin kun aihetta
 	for p,puukansio in enumerate([a.kansio for a in puu.alikansiot]):
 		# Puussa kansioita joita ei oikeasti ole: poista
@@ -257,6 +280,12 @@ def synkkaa(logitiedosto=None):
 	Synkkaa paikalliset tiedostot ulkoisten tiedostojen kanssa.
 	Se, mikä liikkuu mihinkin suuntaan on määritelty kansiovakioiden puolella.
 	'''
+	# Jos Pettankone, päivitetään vain paikalliset tietokannat
+	if kvak.LOKAALI_KONE == "Pettan":
+		print("Pettankone, päivitetään vain paikalliset tietokannat.")
+		logfun.kirjaa(logitiedosto, "Pettankone, päivitetään vain paikalliset tietokannat.")
+		paivita_paikalliset_tietokannat(logitiedosto=logitiedosto)
+		return(1)
 	# Ei tehdä mitään jos asioita ei ole määritelty
 	if None in [kvak.VOIMASUHTEET, kvak.LOKAALIT_TIETOKANNAT]:
 		print("Tietokonetta ei määritelty kansiovakioissa, ei tehdä mitään.")
