@@ -247,6 +247,17 @@ def paivita_puu(puu, logitiedosto=None):
 	return(puu)
 
 
+def muunna_paivaysformaatti(puu):
+	'''
+	Päivitä tiedostojen päiväysformaatti
+	YYYYMMDD -> YYYYMMDDHHMM
+	'''
+	for tiedosto in puu.tiedostot:
+		if tiedosto.lisayspaiva < 1E8:
+			tiedosto.lisayspaiva *= 10000 # lisää neljä nollaa
+	for kansio in puu.alikansiot:
+		muunna_paivaysformaatti(kansio)
+
 
 def paivita_paikalliset_tietokannat(logitiedosto=None):
 	'''
@@ -267,6 +278,7 @@ def paivita_paikalliset_tietokannat(logitiedosto=None):
 			f = open(tietokantatiedosto, "r")
 			puu.lue_tiedostosta(f)
 			f.close()
+			muunna_paivaysformaatti(puu) # aja vain kerran
 			puu = paivita_puu(puu, logitiedosto)
 			f = open(tietokantatiedosto, "w+")
 			f.write(str(puu))
