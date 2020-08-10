@@ -278,7 +278,7 @@ def paivita_paikalliset_tietokannat(logitiedosto=None):
 			f = open(tietokantatiedosto, "r")
 			puu.lue_tiedostosta(f)
 			f.close()
-			muunna_paivaysformaatti(puu) # aja vain kerran
+			# muunna_paivaysformaatti(puu) # aja vain kerran
 			puu = paivita_puu(puu, logitiedosto)
 			f = open(tietokantatiedosto, "w+")
 			f.write(str(puu))
