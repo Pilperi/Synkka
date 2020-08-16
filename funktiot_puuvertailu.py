@@ -40,6 +40,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 				for yritys in range(5):
 					siirrettiin = kfun.lataa(True, isantapalvelin, lahdetiedosto, lapsipalvelin, kohdetiedosto)
 					if siirrettiin:
+						muutettiin = kfun.muuta_oikeudet(os.path.join(kohdetiedosto, tiedosto.tiedostonimi))
 						lapsipuu.tiedostot.append(tiedosto)
 						logfun.kirjaa(logitiedosto, "Siirrettiin.", 3)
 						break
@@ -104,6 +105,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 						# kansio, mutta tällöin päiväykset menisivät ihan miten sattuu.
 						# alikansiopuu = Tiedostopuu(kansio=alikansio.kansio, edellinenkansio=lapsipuu, syvennystaso=alikansio.syvennystaso, tiedostotyyppi=alikansio.tiedostotyyppi)
 						# alikansiopuu.kansoita()
+						muutettiin = kfun.muuta_oikeudet(os.path.join(kohdekansio, alikansio.kansio))
 						lapsipuu.alikansiot.append(alikansio)
 						logfun.kirjaa(logitiedosto, "kopioitu.", 3)
 						break
@@ -213,12 +215,12 @@ def paivita_puu(puu, logitiedosto=None):
 					# Biisi
 					if puu.tiedostotyyppi is Biisi and kfun.paate(paikallinen_tiedosto)[1] in kvak.MUSATIEDOSTOT:
 						tiedosto = Biisi(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
-						logfun.kirjaa(logitiedosto, f"Tiedosto {paikallinen_tiedosto} on muuttunut, päivitetään.", 3)
+						logfun.kirjaa(logitiedosto, f"Tiedosto {paikallinen_tiedosto} on muuttunut, päivitetään ({lok_aika} < {vanha.lisayspaiva}).", 3)
 						puu.tiedostot[i] = tiedosto
 					# Yleinen tiedosto
 					elif puu.tiedostotyyppi is not Biisi:
 						tiedosto = Tiedosto(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
-						logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} on muuttunut, päivitetään.", 3)
+						logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} on muuttunut, päivitetään ({lok_aika} < {vanha.lisayspaiva}).", 3)
 						puu.tiedostot[i] = tiedosto
 					else:
 						logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} ei tarvitse seurata.", 3)
@@ -278,7 +280,7 @@ def paivita_paikalliset_tietokannat(logitiedosto=None):
 			f = open(tietokantatiedosto, "r")
 			puu.lue_tiedostosta(f)
 			f.close()
-			muunna_paivaysformaatti(puu) # aja vain kerran
+			# muunna_paivaysformaatti(puu) # aja vain kerran
 			puu = paivita_puu(puu, logitiedosto)
 			f = open(tietokantatiedosto, "w+")
 			f.write(str(puu))

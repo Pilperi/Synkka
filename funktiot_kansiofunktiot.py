@@ -55,6 +55,28 @@ def etapoisto(vaintiedosto, palvelin, tiedostopolku):
 		return(True, "")
 	return(False, str(koodi.stderr))
 
+def muuta_oikeudet(polku, uid=1000, gid=1000):
+	'''
+	Muuta tiedoston tai kansion oikeudet, rekursiivisesti jos tarvetta.
+	'''
+	if not os.path.exists(polku):
+		return(False)
+	# Helppo tapaus: yksittäinen tiedosto
+	if os.path.isfile(polku):
+		os.chown(polku, uid, gid)
+		return(True)
+	# Kansio: aja rekursiivisesti
+	elif os.path.isdir(polku):
+		os.chown(polku, uid, gid)
+		tiedostot, kansiot = kansion_sisalto(polku)
+		for tiedosto in tiedostot:
+			muutetut.append(muuta_oikeudet(os.path.join(polku, tiedosto), uid, gid))
+		for kansio in kansiot:
+			muutetut.append(muuta_oikeudet(os.path.join(polku, kansio), uid, gid))
+		if sum(muutetut) == len(tiedostot) + len(kansiot):
+			return(True)
+	return(False)
+
 def tiedoston_aikaleima(tiedosto):
 	'''
 	Muunna tiedoston muokkauspäivä Biisn/Tiedoston
