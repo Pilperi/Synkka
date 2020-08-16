@@ -21,7 +21,7 @@ if os.path.exists("C:\\"):
 	LOKAALI_KONE = "Murakumo-win"
 elif os.path.exists("/home/taira"):
 	LOKAALI_KONE = "Pettan"
-	LOGITIEDOSTO = "/koodi/Synkka/logi"
+	LOGITIEDOSTO = "/mnt/data/synkkalogi"
 elif os.path.exists("/home/olkkari"):
 	LOKAALI_KONE = "Olkkari"
 	LOGITIEDOSTO = "/home/olkkari/Scripts/Synkka/logi"
