@@ -27,7 +27,7 @@ Tehtäviä asioita:
 	[/] Kansiomääritelmät, mitä on missäkin ja mihin tietokantatiedostoon pitäisi tallentaa
 		[/] Oman huoneen kone
 			[x] Lokaalit tiedostokansiot
-			[/] Lokaalit tietokannat
+			[/] Lokaalit tietokannat (winukkapuoli...?)
 			[x] Pettanin tietokannat
 		[/] Olkkarikone
 			[x] Lokaalit tiedostokansiot
@@ -39,4 +39,4 @@ Tehtäviä asioita:
 
 
 STATUS:
-	- Asiat aikalailla kunnossa, kirjoitushetkellä puskee automagisoidusti kamaa Pettanille
+	- Asiat hyvinkin kunnossa, pitää vielä ihmetellä että miksi ihmeessä asiat näyttää aina siltä että ne on muuttunu viime käynnistyksen yhteydessä... (käyttöpäivä vs. muokkauspäivä? Implementoi hashit nyt sit kuitenkin?)

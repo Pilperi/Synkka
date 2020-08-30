@@ -246,6 +246,34 @@ def paivita_puu(puu, logitiedosto=None):
 		uusipuu = Tiedostopuu(kansio=puuttuvakansio, edellinenkansio=puu, syvennystaso=puu.syvennystaso+1, tiedostotyyppi=puu.tiedostotyyppi)
 		uusipuu.kansoita()
 		puu.alikansiot.append(uusipuu)
+	# Jos asiat on hassusti niin puussa saattaa olla samoja tiedostoja
+	# moneen kertaan, mikä ei suinkaan ole tarkoitus.
+	# Laskennan kannalta tämän pitäisi olla funktion alussa, mutta mielummin
+	# varmistan että asiat on sitä mitä pitääkin olla kuin että ne tuotetaan fiksusti.
+	puu = poista_kaksoiskappaleet(puu)
+	return(puu)
+
+def poista_kaksoiskappaleet(puu):
+	'''
+	Tarkista, ettei puussa ole tiedostoja kahteen kertaan.
+	'''
+	poistettavat = [] # indeksit poistettaville
+	for t,tiedosto in enumerate(puu.tiedostot):
+		for tt,toinentiedosto in enumerate(puu.tiedostot[t+1:]):
+			if toinentiedosto.tiedostonimi == tiedosto.tiedostonimi:
+				# print(f"{t}:    {puu.tiedostot[t]}")
+				# print(f"{t}+{tt}: {puu.tiedostot[t+tt+1]}")
+				if toinentiedosto.lisayspaiva >= tiedosto.lisayspaiva:
+					poistettavat.append(t+tt+1)
+				else:
+					poistettavat.append(t)
+	poistettavat.sort()
+	poistettavat.reverse()
+	for p in poistettavat:
+		puu.tiedostot.pop(p)
+	# Sama alikansiopuille
+	for a,alikansio in enumerate(puu.alikansiot):
+		puu.alikansiot[a] = poista_kaksoiskappaleet(alikansio)
 	return(puu)
 
 
