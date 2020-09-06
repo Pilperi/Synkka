@@ -67,6 +67,7 @@ def muuta_oikeudet(polku, uid=1000, gid=1000):
 		return(True)
 	# Kansio: aja rekursiivisesti
 	elif os.path.isdir(polku):
+		muutetut = []
 		os.chown(polku, uid, gid)
 		tiedostot, kansiot = kansion_sisalto(polku)
 		for tiedosto in tiedostot:

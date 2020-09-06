@@ -25,7 +25,14 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 
 	# Tiedosto pitäisi olla ja puuttuu tai on vanhentunut ja sisältö muuttunut: kopioi
 	for tiedosto in isantapuu.tiedostot:
-		if not any([a.tiedostonimi==tiedosto.tiedostonimi and a.lisayspaiva>=tiedosto.lisayspaiva and a.hash!=tiedosto.hash for a in lapsipuu.tiedostot]):
+		puuttuu       = True
+		vanhentunut   = False
+		muuttunut     = False
+		for lapsitiedosto in [a for a in lapsipuu.tiedostot if a.tiedostonimi==tiedosto.tiedostonimi]:
+			puuttuu     = False
+			vanhentunut = lapsitiedosto.lisayspaiva < tiedosto.lisayspaiva
+			muuttunut   = lapsitiedosto.hash != tiedosto.hash
+		if puuttuu or (vanhentunut and muuttunut):
 			# lahdetiedosto = os.path.join(isantapuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
 			lahdetiedosto = isantapuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			# kohdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
