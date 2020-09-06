@@ -32,7 +32,7 @@ class Tiedosto:
 		'''
 		self.tiedostonimi = os.path.basename(tiedostopolku)
 		self.lisayspaiva  = self.paivays()[0]
-		# self.hash         = kfun.hanki_hash(tiedostopolku)
+		self.hash         = kfun.hanki_hash(tiedostopolku)
 
 	def paivays(self, lue=None):
 		'''

@@ -102,14 +102,14 @@ def hanki_hash(tiedosto, binmode=True):
 		if binmode:
 			with open(tiedosto, 'rb') as filu:
 				while True:
-					data = filu.read(BUFFERI)
+					data = filu.read(kvak.BUFFERI)
 					if not data:
 						break
 					md5.update(data)
 		else:
 			with open(tiedosto, 'r') as filu:
 				while True:
-					data = filu.read(MERKKIBUFFERI)
+					data = filu.read(kvak.MERKKIBUFFERI)
 					if not data:
 						break
 					md5.update(data.encode("utf-8"))

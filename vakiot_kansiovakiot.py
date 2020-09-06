@@ -12,6 +12,9 @@ LOGITIEDOSTO = "logi"
 MUSATIEDOSTOT = ["mp3", "flac", "wma"]
 KIELLETYT = []
 
+BUFFERI			= 65536 # tiedostoja RAM:iin 64kb paloissa
+MERKKIBUFFERI	= 4000	# jsoneita RAM:iin 4000 merkin paloissa
+
 # Tunnista käytettävä kone kotikansion perusteella.
 LOKAALI_KONE = None
 if os.path.exists("/home/pilperi"):

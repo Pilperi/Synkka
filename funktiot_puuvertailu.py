@@ -23,9 +23,9 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 	if None in [isantapuu, lapsipuu]:
 		return(None)
 
-	# Tiedosto pitäisi olla ja puuttuu tai on vanhentunut: kopioi
+	# Tiedosto pitäisi olla ja puuttuu tai on vanhentunut ja sisältö muuttunut: kopioi
 	for tiedosto in isantapuu.tiedostot:
-		if not any([a.tiedostonimi==tiedosto.tiedostonimi and a.lisayspaiva>=tiedosto.lisayspaiva for a in lapsipuu.tiedostot]):
+		if not any([a.tiedostonimi==tiedosto.tiedostonimi and a.lisayspaiva>=tiedosto.lisayspaiva and a.hash!=tiedosto.hash for a in lapsipuu.tiedostot]):
 			# lahdetiedosto = os.path.join(isantapuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
 			lahdetiedosto = isantapuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			# kohdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
@@ -215,13 +215,15 @@ def paivita_puu(puu, logitiedosto=None):
 					# Biisi
 					if puu.tiedostotyyppi is Biisi and kfun.paate(paikallinen_tiedosto)[1] in kvak.MUSATIEDOSTOT:
 						tiedosto = Biisi(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
-						logfun.kirjaa(logitiedosto, f"Tiedosto {paikallinen_tiedosto} on muuttunut, päivitetään ({lok_aika} < {vanha.lisayspaiva}).", 3)
-						puu.tiedostot[i] = tiedosto
-					# Yleinen tiedosto
+						if tiedosto.hash != vanha.hash:
+							logfun.kirjaa(logitiedosto, f"Tiedosto {paikallinen_tiedosto} on muuttunut, päivitetään ({lok_aika} < {vanha.lisayspaiva}).", 3)
+							puu.tiedostot[i] = tiedosto
+					# Yleinen tiedosto yleisten tiedostojen puussa
 					elif puu.tiedostotyyppi is not Biisi:
 						tiedosto = Tiedosto(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
-						logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} on muuttunut, päivitetään ({lok_aika} < {vanha.lisayspaiva}).", 3)
-						puu.tiedostot[i] = tiedosto
+						if tiedosto.hash != vanha.hash:
+							logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} on muuttunut, päivitetään ({lok_aika} < {vanha.lisayspaiva}).", 3)
+							puu.tiedostot[i] = tiedosto
 					else:
 						logfun.kirjaa(logitiedosto, f"Tiedostoa {paikallinen_tiedosto} ei tarvitse seurata.", 3)
 						puu.tiedostot.pop(i)
