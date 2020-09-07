@@ -220,7 +220,7 @@ def paivita_puu(puu, logitiedosto=None):
 			for i,vanha in enumerate(puu.tiedostot):
 				if vanha.tiedostonimi == paikallinen_tiedosto:
 					# Biisi
-					if puu.tiedostotyyppi is Biisi and kfun.paate(paikallinen_tiedosto)[1] in kvak.MUSATIEDOSTOT:
+					if puu.tiedostotyyppi is Biisi and kfun.paate(paikallinen_tiedosto)[1].lower() in kvak.MUSATIEDOSTOT:
 						tiedosto = Biisi(os.path.join(puu.hae_nykyinen_polku(), paikallinen_tiedosto))
 						if tiedosto.hash != vanha.hash:
 							logfun.kirjaa(logitiedosto, f"Tiedosto {paikallinen_tiedosto} on muuttunut, päivitetään ({lok_aika} < {vanha.lisayspaiva}).", 3)
