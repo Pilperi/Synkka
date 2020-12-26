@@ -12,21 +12,21 @@ def lataa(vaintiedosto, lahdepalvelin, lahdepolku, kohdepalvelin, kohdepolku):
 	'''
 	# Polku palvelimella
 	if lahdepalvelin:
-		kansiopolku = "{}:\"{}\"".format(lahdepalvelin, lahdepolku)
+		kansiopolku = "{}:{}".format(lahdepalvelin, siisti_tiedostonimi(lahdepolku))
 	# Paikallinen polku
 	else:
 		# kansiopolku = "\"{}\"".format(lahdepolku)
 		kansiopolku = "{}".format(siisti_tiedostonimi(lahdepolku))
 	# Polku palvelimella
 	if kohdepalvelin:
-		kohde = "{}:\"{}\"".format(kohdepalvelin, kohdepolku)
+		kohde = "{}:{}".format(kohdepalvelin, siisti_tiedostonimi(kohdepolku))
 	# Paikallinen polku
 	else:
 		# kohde = "\"{}\"".format(kohdepolku)
-		kohde = "{}".format(siisti_tiedostonimi(kohdepolku))
+		kohde = "{}".format(kohdepolku)
 
-	# print(kansiopolku)
-	# print(kohde)
+	print(kansiopolku)
+	print(kohde)
 	if vaintiedosto:
 		koodi = subprocess.call(["scp", "-T", kansiopolku, kohde])
 		# koodi = subprocess.call(["scp", kansiopolku, kohde])
@@ -40,8 +40,23 @@ def siisti_tiedostonimi(nimi):
 	'''
 	Siisti tiedostonimen hankalat merkit scp-yhteensopiviksi,
 	koska ähhh.
+	
+	Ottaa:
+	nimi : str
+		Stringi jonka ikävät merkit muokataan vähemmän ikäviksi.
+
+	Palauttaa:
+	nimi : str
+		Siivottu stringi.
 	'''
-	nimi.replace(" ", "\\ ").replace("\"", "\\\"").replace("!", "\\!").replace("\'", "\\\'")
+	nimi = nimi.replace("\"", "\\\"")\
+		      .replace(" ", "\\ ")\
+		      .replace("\'", "\\\'")\
+		      .replace("!", "\\!")\
+		      .replace("(", "\\(")\
+		      .replace(")", "\\)")\
+		      .replace("&", "\\&")\
+		      .replace(";", "\\;")
 	return(nimi)
 
 def etapoisto(vaintiedosto, palvelin, tiedostopolku):
@@ -49,6 +64,7 @@ def etapoisto(vaintiedosto, palvelin, tiedostopolku):
 	Poista etäpalvelimella oleva tiedosto SSH yli
 	'''
 	tiedostopolku = siisti_tiedostonimi(tiedostopolku)
+	print(["ssh", palvelin, "rm{:s} {:s}".format(" -r"*(not(vaintiedosto)), tiedostopolku)])
 	koodi = subprocess.run(["ssh", palvelin, "rm{:s} \"{:s}\"".format(" -r"*(not(vaintiedosto)), tiedostopolku)], capture_output=True)
 	# print(koodi)
 	if koodi.returncode != 1:
