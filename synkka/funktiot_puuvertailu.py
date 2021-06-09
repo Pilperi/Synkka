@@ -1,11 +1,12 @@
 import os
 import shutil
-import vakiot_kansiovakiot as kvak
-import funktiot_kansiofunktiot as kfun
-import funktiot_logifunktiot as logfun
-from class_tiedosto import Tiedosto
-from class_biisit import Biisi
-from class_tiedostopuu import Tiedostopuu
+from tiedostohallinta import vakiot_kansiovakiot as kvak
+from tiedostohallinta import funktiot_kansiofunktiot as kfun
+from tiedostohallinta import funktiot_logifunktiot as logfun
+from tiedostohallinta.class_tiedosto import Tiedosto
+from tiedostohallinta.class_biisit import Biisi
+from tiedostohallinta.class_tiedostopuu import Tiedostopuu
+
 
 def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvelin=None, tulosta=False, logitiedosto=None):
 	'''
@@ -23,42 +24,30 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 	if None in [isantapuu, lapsipuu]:
 		return(None)
 
-	# Tiedosto pitäisi olla ja puuttuu tai on vanhentunut ja sisältö muuttunut: kopioi
-	for tiedosto in isantapuu.tiedostot:
-		puuttuu       = True
-		vanhentunut   = False
-		muuttunut     = False
-		for lapsitiedosto in [a for a in lapsipuu.tiedostot if a.tiedostonimi==tiedosto.tiedostonimi]:
-			puuttuu     = False
-			vanhentunut = lapsitiedosto.lisayspaiva < tiedosto.lisayspaiva
-			muuttunut   = lapsitiedosto.hash != tiedosto.hash
-		if puuttuu or (vanhentunut and muuttunut):
-			# lahdetiedosto = os.path.join(isantapuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
-			lahdetiedosto = isantapuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
-			# kohdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
-			kohdetiedosto = lapsipuu.hae_nykyinen_polku()
-			# Siirrä
-			logfun.kirjaa(logitiedosto, f"Lataa tiedosto\n   {lahdetiedosto}\n   kohteeseen\n   {kohdetiedosto}", 3)
-			print(f"Lataa tiedosto\n   {lahdetiedosto}\n   kohteeseen\n   {kohdetiedosto}")
-			if kvak.TESTIMOODI:
-				break
-			else:
-				siirrettiin = False
-				for yritys in range(5):
-					siirrettiin = kfun.lataa(True, isantapalvelin, lahdetiedosto, lapsipalvelin, kohdetiedosto)
-					if siirrettiin:
-						muutettiin = kfun.muuta_oikeudet(os.path.join(kohdetiedosto, tiedosto.tiedostonimi))
-						lapsipuu.tiedostot.append(tiedosto)
-						logfun.kirjaa(logitiedosto, "Siirrettiin.", 3)
-						break
-					else:
-						logfun.kirjaa(logitiedosto, "Ei saatu siirrettyä :<", 3)
+	# Tiedosto pitäisi olla ja puuttuu: kopioi
+	for tiedosto in [a for a in isantapuu.tiedostot if not any([b.tiedostonimi==a.tiedostonimi for b in lapsipuu.tiedostot])]:
+		lahdetiedosto = isantapuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
+		kohdetiedosto = lapsipuu.hae_nykyinen_polku()
+		# Siirrä
+		logfun.kirjaa(logitiedosto, f"Lataa tiedosto\n   {str(isantapalvelin)}:{lahdetiedosto}\n  kohteeseen\n   {str(lapsipalvelin)}:{kohdetiedosto}", 3)
+		print(f"Lataa tiedosto\n   {str(isantapalvelin)}:{lahdetiedosto}\n   kohteeseen\n   {str(lapsipalvelin)}:{kohdetiedosto}")
+		if kvak.TESTIMOODI:
+			break
+		else:
+			siirrettiin = False
+			for yritys in range(5):
+				siirrettiin = kfun.lataa(True, isantapalvelin, lahdetiedosto, lapsipalvelin, kohdetiedosto)
+				if siirrettiin:
+					muutettiin = kfun.muuta_oikeudet(os.path.join(kohdetiedosto, tiedosto.tiedostonimi))
+					lapsipuu.tiedostot.append(tiedosto)
+					logfun.kirjaa(logitiedosto, "Siirrettiin.", 3)
+					break
+				else:
+					logfun.kirjaa(logitiedosto, "Ei saatu siirrettyä :<", 3)
 	# Tiedostoa ei pitäisi olla: poista
 	poistetut_tiedostot = []
 	for indeksi,tiedosto in enumerate(lapsipuu.tiedostot):
 		if not any([a.tiedostonimi==tiedosto.tiedostonimi for a in isantapuu.tiedostot]):
-			# lahdetiedosto = os.path.join(lapsipuu.hae_nykyinen_polku(), tiedosto.tiedostonimi)
-			# lahdetiedosto = lapsipuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			lahdetiedosto = lapsipuu.hae_nykyinen_polku() + tiedosto.tiedostonimi
 			# Tiedosto etäpalvelimella
 			if type(lapsipalvelin) is str:
@@ -94,10 +83,7 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 				break
 		# Ei ole lapsipuussa: kopioi
 		if not molemmissa:
-			# lahdekansio = os.path.join(isantapuu.hae_nykyinen_polku(), alikansio.kansio)
 			lahdekansio = isantapuu.hae_nykyinen_polku() + alikansio.kansio # / lopussa
-			# kohdekansio = os.path.join(lapsipuu.hae_nykyinen_polku(), alikansio.kansio)
-			# kohdekansio = lapsipuu.hae_nykyinen_polku() + alikansio.kansio
 			kohdekansio = lapsipuu.hae_nykyinen_polku()
 			# Siirrä
 			logfun.kirjaa(logitiedosto, f"Kopioi kansio\n   {lahdekansio}\n   kohteeseen\n   {kohdekansio}", 3)
@@ -110,9 +96,6 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 						# Luo Tiedostopuu alikansiosta.
 						# Voitaisiin vaan ottaa suoraan alikansiosta versio jonka isäntä on lapsipuun
 						# kansio, mutta tällöin päiväykset menisivät ihan miten sattuu.
-						# alikansiopuu = Tiedostopuu(kansio=alikansio.kansio, edellinenkansio=lapsipuu, syvennystaso=alikansio.syvennystaso, tiedostotyyppi=alikansio.tiedostotyyppi)
-						# alikansiopuu.kansoita()
-						muutettiin = kfun.muuta_oikeudet(os.path.join(kohdekansio, alikansio.kansio))
 						lapsipuu.alikansiot.append(alikansio)
 						logfun.kirjaa(logitiedosto, "kopioitu.", 3)
 						break
@@ -147,7 +130,6 @@ def vertaa_puita(isantapuu=None, isantapalvelin=None, lapsipuu=None, lapsipalvel
 		while i >= 0:
 			p = lapsipuu.alikansiot.pop(i)
 			i -= 1
-
 	# Palauta (ehkä) muokattu lapsipuu
 	return(lapsipuu)
 
