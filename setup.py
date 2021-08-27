@@ -7,7 +7,6 @@ setuptools.setup(
     url="https://github.com/Pilperi/Synkka",
     author="Pilperi",
     description="Työkalut datan synkkaamiseen pettanille",
-    long_description=open('README.md').read(),
     packages=setuptools.find_packages(),
     install_requires = [
         'tiedostohallinta @ git+https://github.com/Pilperi/Tiedostohallinta'
